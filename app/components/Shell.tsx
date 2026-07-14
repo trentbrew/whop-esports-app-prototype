@@ -6,8 +6,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="shell">
       <aside className="rail">
-        <Link href="/" className="brand">
-          <span className="mark">C</span>
+        <Link href="/" className="brand" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <svg className="mark-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 20L15 4" stroke="url(#whop-orange-grad)" strokeWidth="4.5" strokeLinecap="round"/>
+            <path d="M12 20L21 4" stroke="url(#whop-orange-grad)" strokeWidth="4.5" strokeLinecap="round"/>
+            <defs>
+              <linearGradient id="whop-orange-grad" x1="6" y1="20" x2="21" y2="4" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#ff5f25" />
+                <stop offset="1" stopColor="#ff3b00" />
+              </linearGradient>
+            </defs>
+          </svg>
           Circuit
         </Link>
         <NavLinks />

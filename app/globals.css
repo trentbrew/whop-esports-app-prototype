@@ -4,24 +4,35 @@
    ============================================================ */
 
 :root {
-  --bg: #0d0f1a;
-  --bg-2: #0a0b14;
-  --ink: #eceff7;
-  --muted: #8a90a6;
-  --faint: #5b6178;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.14);
+  /* Whop Matte Charcoal & Dark Neutrals */
+  --bg: #0c0c0e;
+  --bg-2: #060607;
+  --ink: #f4f4f5;
+  --muted: #a1a1aa;
+  --faint: #52525b;
+  --line: rgba(255, 255, 255, 0.06);
+  --line-strong: rgba(255, 255, 255, 0.12);
 
-  --gold: #f5b54a;
-  --gold-deep: #d99320;
-  --gold-glow: rgba(245, 181, 74, 0.16);
-  --live: #4adec0;
+  /* Whop Brand Accents: Orange for brand/highlights, Blue for main CTA/actions */
+  --whop-orange: #ff5f25;
+  --whop-orange-deep: #ff3b00;
+  --whop-orange-glow: rgba(255, 95, 37, 0.12);
 
-  --panel: rgba(24, 27, 42, 0.72);
-  --panel-solid: #171a29;
-  --radius: 16px;
+  --whop-blue: #2563eb;
+  --whop-blue-deep: #1d4ed8;
+  --whop-blue-glow: rgba(37, 99, 235, 0.16);
 
-  --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+  /* Map standard variables to Whop's brand style so existing layout works seamlessly */
+  --gold: var(--whop-orange);
+  --gold-deep: var(--whop-orange-deep);
+  --gold-glow: var(--whop-orange-glow);
+  --live: #22d3ee; /* Electric teal for live state */
+
+  --panel: rgba(20, 20, 23, 0.75);
+  --panel-solid: #151517;
+  --radius: 8px; /* Clean, modern, tighter corners matching Whop */
+
+  --shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.8);
 }
 
 * {
@@ -93,17 +104,8 @@ body {
   letter-spacing: -0.02em;
 }
 
-.brand .mark {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  background: linear-gradient(150deg, var(--gold), var(--gold-deep));
-  display: grid;
-  place-items: center;
-  color: #1a1204;
-  font-weight: 800;
-  font-size: 15px;
-  box-shadow: 0 0 0 1px rgba(245, 181, 74, 0.3), 0 8px 20px -8px var(--gold);
+.mark-svg {
+  filter: drop-shadow(0 2px 8px rgba(255, 95, 37, 0.35));
 }
 
 .navlink {
@@ -111,13 +113,14 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 9px 11px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
   color: var(--muted);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
   transition: background 0.15s, color 0.15s;
+  border-left: 2px solid transparent;
 }
 .navlink:hover {
   background: rgba(255, 255, 255, 0.04);
@@ -125,7 +128,11 @@ body {
 }
 .navlink.active {
   background: rgba(255, 255, 255, 0.06);
-  color: var(--ink);
+  color: #ffffff;
+  font-weight: 600;
+  border-left-color: var(--whop-orange);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 .navlink .tag {
   font-family: var(--font-mono);
@@ -383,12 +390,12 @@ h1.page {
   color: var(--ink);
 }
 .btn-gold {
-  background: linear-gradient(150deg, var(--gold), var(--gold-deep));
-  color: #1a1204;
-  box-shadow: 0 10px 30px -12px var(--gold);
+  background: linear-gradient(135deg, var(--whop-orange), var(--whop-orange-deep));
+  color: #ffffff;
+  box-shadow: 0 8px 24px -10px var(--whop-orange);
 }
 .btn-gold:hover:not(:disabled) {
-  filter: brightness(1.06);
+  filter: brightness(1.08);
 }
 .btn-ghost {
   background: rgba(255, 255, 255, 0.04);
@@ -396,6 +403,7 @@ h1.page {
 }
 .btn-ghost:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.08);
+  border-color: var(--muted);
 }
 .btn:disabled {
   opacity: 0.5;
@@ -425,20 +433,21 @@ input.inp,
 textarea.inp,
 select.inp {
   width: 100%;
-  background: rgba(0, 0, 0, 0.28);
+  background: #0d0d0f;
   border: 1px solid var(--line-strong);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 11px 13px;
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 15px;
-  transition: border-color 0.15s;
+  font-size: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 input.inp:focus,
 textarea.inp:focus,
 select.inp:focus {
   outline: none;
-  border-color: var(--gold);
+  border-color: var(--whop-blue);
+  box-shadow: 0 0 0 2px var(--whop-blue-glow);
 }
 .inp.money {
   font-family: var(--font-mono);
