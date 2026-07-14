@@ -1,0 +1,23 @@
+/node_modules
+/.next
+/out
+/build
+/.data
+.DS_Store
+*.pem
+
+# env
+.env
+.env*.local
+
+# debug
+npm-debug.log*
+pnpm-debug.log*
+
+# typescript
+next-env.d.ts
+*.tsbuildinfo
+notes
+.playwright-mcp
+.trellis
+.vscode
