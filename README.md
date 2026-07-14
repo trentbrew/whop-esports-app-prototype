@@ -1,17 +1,15 @@
-# Circuit — esports tournaments (Whop payments prototype)
+# Circuit: esports tournaments (Whop payments prototype)
 
 A tightly-scoped "start.gg for esports" prototype whose whole subject is the
 **money lifecycle**: players buy into a bracket, entries stack the purse, the
 organizer settles a winner, and the winner cashes out.
 
-Entry **payments are real** (Whop embedded checkout). Everything downstream —
-purses, balances, withdrawals, approvals — runs on a modeled local ledger so
-the full loop is demoable and flawless without moving real money.
+Entry **payments are real** (Whop embedded checkout). Everything downstream (purses, balances, withdrawals, approvals) runs on a modeled local ledger so the full loop is demoable and flawless without moving real money.
 
 ## The loop
 
 ```
- /            Circuit lobby — tournament cards with the gold purse meter
+ /            Circuit lobby: tournament cards with the orange purse meter
  /t/[id]      Enter → pay entry (Whop checkout, or modeled) → roster + purse grow
  /admin       Organizer locks entries → single-elim bracket is generated
  /t/[id]      Report match results (tap to advance) → champion is credited
@@ -33,7 +31,7 @@ pnpm install
 pnpm dev        # http://localhost:3000
 ```
 
-Runs out of the box with **no configuration** — entries are modeled against a
+Runs out of the box with **no configuration**; entries are modeled against a
 local SQLite ledger (`.data/circuit.db`, via Node's built-in `node:sqlite`,
 zero native deps). Seed data ships a signed-in player (`nova`) who already won
 a past event, so the withdrawal flow is live immediately.
@@ -50,11 +48,7 @@ the webhook adds the player to the roster on `payment.succeeded` using the
 
 ## Design
 
-Ink-indigo base, **gold = money** as the one bold accent, a whisper of teal
-for "live". Archivo / Inter / JetBrains Mono, with every currency figure and id
-set in tabular mono so the whole app reads as a ledger. Glass panels float over
-an ambient bracket-grid arena. Signature element: the gold **purse meter** —
-one bar encoding both pot size and how full the bracket is.
+Dark charcoal base, **orange = brand highlight** as the bold accent, a whisper of teal for "live". Archivo / Inter / JetBrains Mono, with every currency figure and id set in tabular mono so the whole app reads as a ledger. Glass panels float over an ambient arena glow. Signature element: the orange **purse meter**, one bar encoding both pot size and how full the bracket is.
 
 ## Scope
 
