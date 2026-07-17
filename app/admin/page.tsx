@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Badge, Button, Card, Heading, Text } from "@whop/react/components";
 import {
   listPayoutRequests,
   listTournaments,
@@ -5,7 +7,6 @@ import {
   listPayoutMethods,
 } from "@/lib/db";
 import { formatCents } from "@/lib/money";
-import Link from "next/link";
 import { approvePayoutRequest, startTournament } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
@@ -22,29 +23,47 @@ export default function AdminPage() {
   const manageable = listTournaments().filter((t) => t.status !== "completed");
 
   return (
-    <>
-      <p className="eyebrow">Organizer console</p>
-      <h1 className="page">Run the money.</h1>
-      <p className="lede">
-        Settle brackets to release the purse, and approve player withdrawals
-        once every check clears.
-      </p>
+    <div className="stack" style={{ gap: 28 }}>
+      <div>
+        <Text
+          size="1"
+          color="gray"
+          weight="medium"
+          style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}
+        >
+          Organizer console
+        </Text>
+        <Heading as="h1" size="8" style={{ marginTop: 8 }}>
+          Run the money.
+        </Heading>
+        <Text
+          as="p"
+          size="3"
+          color="gray"
+          style={{ maxWidth: "56ch", marginTop: 8 }}
+        >
+          Settle brackets to release the purse, and approve player withdrawals
+          once every check clears.
+        </Text>
+      </div>
 
       <div className="stack">
-        <section className="panel" style={{ padding: 24 }}>
-          <div className="between" style={{ marginBottom: 4 }}>
-            <h2 className="section-title" style={{ margin: 0 }}>
+        <Card size="2" variant="surface">
+          <div className="between" style={{ marginBottom: 12 }}>
+            <Heading as="h2" size="4">
               Payout requests
-            </h2>
-            <span className="pill pending">
-              <span className="dot" /> {pending.length} pending
-            </span>
+            </Heading>
+            <Badge color="orange" variant="soft">
+              {pending.length} pending
+            </Badge>
           </div>
 
           {requests.length === 0 ? (
-            <p className="empty">No payout requests yet.</p>
+            <Text size="2" color="gray">
+              No payout requests yet.
+            </Text>
           ) : (
-            <div className="stack" style={{ gap: 14, marginTop: 14 }}>
+            <div className="stack" style={{ gap: 14 }}>
               {requests.map((r) => {
                 const acc = getAccount(r.email);
                 const hasMethod = listPayoutMethods(r.email).length > 0;
@@ -54,40 +73,44 @@ export default function AdminPage() {
                     label: "Identity verified",
                     ok: acc.identity_status === "verified",
                   },
-                  { label: "Sufficient balance", ok: r.status === "paid" || acc.balance_cents >= r.amount_cents },
+                  {
+                    label: "Sufficient balance",
+                    ok:
+                      r.status === "paid" ||
+                      acc.balance_cents >= r.amount_cents,
+                  },
                 ];
                 const clear = ready.every((c) => c.ok);
                 return (
-                  <div
-                    key={r.id}
-                    className="ready"
-                    style={{ background: "rgba(0,0,0,0.2)" }}
-                  >
+                  <div key={r.id} className="ready">
                     <div className="between" style={{ alignItems: "flex-start" }}>
                       <div>
-                        <div style={{ fontWeight: 600, marginBottom: 2 }}>
-                          {r.handle}
-                        </div>
-                        <div className="muted" style={{ fontSize: 13 }}>
+                        <Text weight="bold">{r.handle}</Text>
+                        <Text as="div" size="2" color="gray">
                           {r.reason}
-                        </div>
+                        </Text>
                       </div>
                       <div style={{ textAlign: "right" }}>
-                        <div
+                        <Text
+                          size="4"
+                          weight="bold"
+                          color="orange"
                           className="num"
-                          style={{ color: "var(--gold)", fontWeight: 700, fontSize: 18 }}
                         >
                           {formatCents(r.amount_cents)}
-                        </div>
-                        <div className="muted" style={{ fontSize: 12 }}>
+                        </Text>
+                        <Text as="div" size="1" color="gray">
                           {dateFmt.format(new Date(r.created_at))}
-                        </div>
+                        </Text>
                       </div>
                     </div>
 
                     <div style={{ marginTop: 6 }}>
                       {ready.map((c) => (
-                        <div key={c.label} className={`check${c.ok ? " done" : ""}`}>
+                        <div
+                          key={c.label}
+                          className={`check${c.ok ? " done" : ""}`}
+                        >
                           <span className="box">{c.ok ? "✓" : ""}</span>
                           {c.label}
                         </div>
@@ -95,14 +118,29 @@ export default function AdminPage() {
                     </div>
 
                     {r.status === "paid" ? (
-                      <span className="pill paid" style={{ alignSelf: "flex-start", marginTop: 4 }}>
-                        <span className="dot" /> paid via {r.method_label ?? "transfer"}
-                      </span>
+                      <Badge
+                        color="teal"
+                        variant="soft"
+                        style={{ alignSelf: "flex-start", marginTop: 4 }}
+                      >
+                        paid via {r.method_label ?? "transfer"}
+                      </Badge>
                     ) : (
-                      <form action={approvePayoutRequest.bind(null, r.id)}>
-                        <button className="btn btn-gold btn-block" disabled={!clear}>
-                          {clear ? "Approve payout" : "Blocked — checks incomplete"}
-                        </button>
+                      <form
+                        action={approvePayoutRequest.bind(null, r.id)}
+                        style={{ marginTop: 8 }}
+                      >
+                        <Button
+                          type="submit"
+                          color="blue"
+                          variant="solid"
+                          disabled={!clear}
+                          style={{ width: "100%" }}
+                        >
+                          {clear
+                            ? "Approve payout"
+                            : "Blocked — checks incomplete"}
+                        </Button>
                       </form>
                     )}
                   </div>
@@ -110,47 +148,60 @@ export default function AdminPage() {
               })}
             </div>
           )}
-        </section>
+        </Card>
 
-        <section className="panel" style={{ padding: 24 }}>
-          <h2 className="section-title">Brackets</h2>
-          <p className="muted" style={{ fontSize: 14, marginTop: 0 }}>
+        <Card size="2" variant="surface">
+          <Heading as="h2" size="4" style={{ marginBottom: 8 }}>
+            Brackets
+          </Heading>
+          <Text size="2" color="gray" style={{ marginBottom: 12 }}>
             Lock entries to generate the bracket, then report results on the
             tournament page. The champion is credited the full purse.
-          </p>
+          </Text>
           {manageable.length === 0 ? (
-            <p className="empty">No active tournaments.</p>
+            <Text size="2" color="gray">
+              No active tournaments.
+            </Text>
           ) : (
             <div className="stack" style={{ gap: 12 }}>
               {manageable.map((t) => (
                 <div
                   key={t.id}
                   className="between"
-                  style={{ gap: 12, padding: "12px 0", borderTop: "1px solid var(--line)" }}
+                  style={{
+                    gap: 12,
+                    padding: "12px 0",
+                    borderTop: "1px solid var(--gray-a5)",
+                  }}
                 >
                   <div>
-                    <div style={{ fontWeight: 600 }}>{t.name}</div>
-                    <div className="muted num" style={{ fontSize: 13 }}>
+                    <Text weight="bold">{t.name}</Text>
+                    <Text as="div" size="2" color="gray" className="num">
                       {formatCents(t.pool_cents)} purse · {t.filled} players
-                    </div>
+                    </Text>
                   </div>
                   {t.status === "live" ? (
-                    <Link href={`/t/${t.id}`} className="btn btn-ghost">
-                      Open bracket →
-                    </Link>
+                    <Button asChild variant="soft" color="gray">
+                      <Link href={`/t/${t.id}`}>Open bracket →</Link>
+                    </Button>
                   ) : (
                     <form action={startTournament.bind(null, t.id)}>
-                      <button className="btn btn-gold" disabled={t.filled < 2}>
+                      <Button
+                        type="submit"
+                        color="blue"
+                        variant="solid"
+                        disabled={t.filled < 2}
+                      >
                         {t.filled < 2 ? "Need 2+ players" : "Lock & start"}
-                      </button>
+                      </Button>
                     </form>
                   )}
                 </div>
               ))}
             </div>
           )}
-        </section>
+        </Card>
       </div>
-    </>
+    </div>
   );
 }

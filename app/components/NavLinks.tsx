@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Badge } from "@whop/react/components";
 
 const LINKS = [
-  { href: "/", label: "Circuit" },
+  { href: "/", label: "Home" },
   { href: "/account", label: "Account" },
   { href: "/admin", label: "Organizer", tag: "admin" },
 ];
@@ -15,7 +16,9 @@ export function NavLinks() {
     <nav>
       {LINKS.map((l) => {
         const active =
-          l.href === "/" ? pathname === "/" || pathname.startsWith("/t/") : pathname.startsWith(l.href);
+          l.href === "/"
+            ? pathname === "/" || pathname.startsWith("/t/")
+            : pathname.startsWith(l.href);
         return (
           <Link
             key={l.href}
@@ -23,7 +26,11 @@ export function NavLinks() {
             className={`navlink${active ? " active" : ""}`}
           >
             {l.label}
-            {l.tag && <span className="tag">{l.tag}</span>}
+            {l.tag && (
+              <Badge size="1" color="blue" variant="soft">
+                {l.tag}
+              </Badge>
+            )}
           </Link>
         );
       })}

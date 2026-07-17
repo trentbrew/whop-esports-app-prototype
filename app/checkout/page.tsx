@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import { useRouter } from "next/navigation";
+import { Card, Heading, Link, Text } from "@whop/react/components";
 import { WhopCheckoutEmbed } from "@whop/checkout/react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
@@ -16,29 +17,46 @@ export default function CheckoutPage({
 
   if (!session) {
     return (
-      <div className="panel" style={{ padding: 28, maxWidth: 460 }}>
-        <p className="eyebrow">Checkout</p>
-        <h1 className="page" style={{ fontSize: 26 }}>
+      <Card size="2" variant="surface" style={{ maxWidth: 460 }}>
+        <Text
+          size="1"
+          color="gray"
+          weight="medium"
+          style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}
+        >
+          Checkout
+        </Text>
+        <Heading as="h1" size="6" style={{ marginTop: 8 }}>
           Missing session
-        </h1>
-        <p className="muted">
+        </Heading>
+        <Text as="p" size="2" color="gray" style={{ marginTop: 8 }}>
           No checkout session was provided.{" "}
-          <a className="link" href="/">
-            Back to the circuit
-          </a>
-          .
-        </p>
-      </div>
+          <Link href="/">Back to the circuit</Link>.
+        </Text>
+      </Card>
     );
   }
 
   return (
-    <div style={{ maxWidth: 480 }}>
-      <p className="eyebrow">Secure checkout</p>
-      <h1 className="page" style={{ fontSize: 30, marginBottom: 20 }}>
-        Confirm your entry
-      </h1>
-      <div className="panel" style={{ padding: 8, overflow: "hidden" }}>
+    <div className="stack" style={{ maxWidth: 480, gap: 20 }}>
+      <div>
+        <Text
+          size="1"
+          color="gray"
+          weight="medium"
+          style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}
+        >
+          Secure checkout
+        </Text>
+        <Heading as="h1" size="7" style={{ marginTop: 8 }}>
+          Confirm your entry
+        </Heading>
+      </div>
+      <Card
+        size="1"
+        variant="surface"
+        style={{ overflow: "hidden", padding: 8 }}
+      >
         <WhopCheckoutEmbed
           sessionId={session}
           theme="dark"
@@ -51,7 +69,7 @@ export default function CheckoutPage({
             );
           }}
         />
-      </div>
+      </Card>
     </div>
   );
 }

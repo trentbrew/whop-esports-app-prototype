@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import {
+  Button,
+  Callout,
+  Text,
+  TextArea,
+  TextField,
+} from "@whop/react/components";
 import { requestWithdrawal } from "@/app/actions";
 import { formatCents } from "@/lib/money";
 
@@ -20,43 +27,60 @@ export function WithdrawForm({ maxCents }: { maxCents: number }) {
 
   if (done) {
     return (
-      <div className="ready">
-        <div className="check done">
-          <span className="box">✓</span>
+      <Callout.Root color="teal">
+        <Callout.Text>
           Withdrawal requested — pending organizer approval.
-        </div>
-      </div>
+        </Callout.Text>
+      </Callout.Root>
     );
   }
 
   return (
     <form action={submit}>
-      <label className="field">
-        <span>Amount (max {formatCents(maxCents)})</span>
-        <input
-          className="inp money"
-          name="amount"
-          type="number"
-          step="0.01"
-          min="0.01"
-          max={(maxCents / 100).toFixed(2)}
-          defaultValue={(maxCents / 100).toFixed(2)}
-          required
-        />
-      </label>
-      <label className="field">
-        <span>Description</span>
-        <textarea
-          className="inp"
-          name="reason"
-          placeholder="Prize winnings from Weekly Wavedash — 1st place"
-          required
-        />
-      </label>
-      {error && <p className="err" style={{ marginBottom: 12 }}>{error}</p>}
-      <button className="btn btn-gold btn-block" disabled={pending}>
-        {pending ? "Submitting…" : "Request withdrawal"}
-      </button>
+      <div className="stack" style={{ gap: 12 }}>
+        <label>
+          <Text as="div" size="1" color="gray" style={{ marginBottom: 4 }}>
+            Amount (max {formatCents(maxCents)})
+          </Text>
+          <TextField.Root>
+            <TextField.Input
+              name="amount"
+              type="number"
+              step="0.01"
+              min="0.01"
+              max={(maxCents / 100).toFixed(2)}
+              defaultValue={(maxCents / 100).toFixed(2)}
+              required
+            />
+          </TextField.Root>
+        </label>
+        <label>
+          <Text as="div" size="1" color="gray" style={{ marginBottom: 4 }}>
+            Description
+          </Text>
+          <TextArea
+            name="reason"
+            placeholder="Prize winnings from Weekly Wavedash — 1st place"
+            required
+          />
+        </label>
+        {error && (
+          <Text size="2" color="red">
+            {error}
+          </Text>
+        )}
+        <Button
+          type="submit"
+          size="3"
+          color="blue"
+          variant="solid"
+          loading={pending}
+          disabled={pending}
+          style={{ width: "100%" }}
+        >
+          Request withdrawal
+        </Button>
+      </div>
     </form>
   );
 }

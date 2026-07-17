@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Badge, Button, Card, Heading, Text } from "@whop/react/components";
 import { CURRENT_USER, getBracket, getTournament } from "@/lib/db";
 import { formatCents, formatShort } from "@/lib/money";
 import { PrizeMeter } from "@/app/components/PrizeMeter";
@@ -30,34 +31,52 @@ export default async function TournamentPage({
   const bracket = getBracket(t.id);
 
   return (
-    <>
-      <Link href="/" className="link" style={{ fontSize: 13 }}>
-        ← All tournaments
-      </Link>
+    <div className="stack" style={{ gap: 28 }}>
+      <div>
+        <Text asChild size="2" color="gray">
+          <Link href="/">← All tournaments</Link>
+        </Text>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "16px 0 6px" }}>
-        <span className="game-tag">{t.game}</span>
-        {t.status === "completed" ? (
-          <span className="pill completed">
-            <span className="dot" /> settled
-          </span>
-        ) : t.status === "live" ? (
-          <span className="pill open">
-            <span className="dot" /> live
-          </span>
-        ) : (
-          <span className="pill open">
-            <span className="dot" /> open
-          </span>
-        )}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            margin: "16px 0 6px",
+          }}
+        >
+          <Text
+            size="1"
+            color="gray"
+            weight="medium"
+            style={{ letterSpacing: "0.08em", textTransform: "uppercase" }}
+          >
+            {t.game}
+          </Text>
+          {t.status === "completed" ? (
+            <Badge color="orange" variant="soft">
+              settled
+            </Badge>
+          ) : t.status === "live" ? (
+            <Badge color="teal" variant="soft">
+              live
+            </Badge>
+          ) : (
+            <Badge color="teal" variant="soft">
+              open
+            </Badge>
+          )}
+        </div>
+        <Heading as="h1" size="8">
+          {t.name}
+        </Heading>
+        <Text as="p" size="3" color="gray" style={{ marginTop: 8 }}>
+          Hosted by {t.host}. {t.description}
+        </Text>
       </div>
-      <h1 className="page">{t.name}</h1>
-      <p className="lede" style={{ marginBottom: 24 }}>
-        Hosted by {t.host}. {t.description}
-      </p>
 
       <div className="stack">
-        <section className="panel" style={{ padding: 24 }}>
+        <Card size="2" variant="surface">
           <PrizeMeter
             poolCents={t.pool_cents}
             filled={t.filled}
@@ -67,7 +86,7 @@ export default async function TournamentPage({
           <div className="meta" style={{ marginTop: 22 }}>
             <div>
               <div className="k">Entry</div>
-              <div className="v num" style={{ color: "var(--gold)" }}>
+              <div className="v num" style={{ color: "var(--orange-11)" }}>
                 {formatShort(t.entry_fee_cents)}
               </div>
             </div>
@@ -103,13 +122,23 @@ export default async function TournamentPage({
                 </div>
               </div>
             ) : t.status === "live" ? (
-              <button className="btn btn-ghost btn-block" disabled>
+              <Button
+                variant="soft"
+                color="gray"
+                disabled
+                style={{ width: "100%" }}
+              >
                 Entries locked — bracket in progress
-              </button>
+              </Button>
             ) : entered ? (
-              <button className="btn btn-ghost btn-block" disabled>
+              <Button
+                variant="soft"
+                color="gray"
+                disabled
+                style={{ width: "100%" }}
+              >
                 ✓ You&apos;re in — good luck
-              </button>
+              </Button>
             ) : (
               <EnterButton
                 tournamentId={t.id}
@@ -118,28 +147,28 @@ export default async function TournamentPage({
               />
             )}
           </div>
-        </section>
+        </Card>
 
         {bracket && (
-          <section className="panel" style={{ padding: 24 }}>
+          <Card size="2" variant="surface">
             <div className="between" style={{ marginBottom: 14 }}>
-              <h2 className="section-title" style={{ margin: 0 }}>
+              <Heading as="h2" size="4">
                 Bracket
-              </h2>
+              </Heading>
               {t.status === "live" && (
-                <span className="muted" style={{ fontSize: 13 }}>
+                <Text size="2" color="gray">
                   Tap a player to advance them
-                </span>
+                </Text>
               )}
             </div>
             {bracket.champion && (
               <div className="champion-banner">
                 <span className="trophy">🏆</span>
                 <div>
-                  <b>{bracket.champion.handle}</b>
-                  <div className="muted num" style={{ fontSize: 13 }}>
+                  <Text weight="bold">{bracket.champion.handle}</Text>
+                  <Text as="div" size="2" color="gray" className="num">
                     Champion · {formatCents(t.pool_cents)} purse
-                  </div>
+                  </Text>
                 </div>
               </div>
             )}
@@ -148,35 +177,45 @@ export default async function TournamentPage({
               bracket={bracket}
               interactive={t.status === "live"}
             />
-          </section>
+          </Card>
         )}
 
-        <section className="panel" style={{ padding: 24 }}>
-          <h2 className="section-title">Roster</h2>
+        <Card size="2" variant="surface">
+          <Heading as="h2" size="4" style={{ marginBottom: 12 }}>
+            Roster
+          </Heading>
           {t.roster.length === 0 ? (
-            <p className="muted" style={{ fontSize: 14 }}>
+            <Text size="2" color="gray">
               No players yet. Be the first to buy in.
-            </p>
+            </Text>
           ) : (
             <div className="rows">
               {t.roster.map((e, i) => (
                 <div className="row" key={e.id}>
-                  <span className="seed">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="handle">
+                  <span className="seed">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <Text size="2" weight="medium">
                     {e.player_handle}
                     {e.player_email === CURRENT_USER && (
-                      <span className="muted"> · you</span>
+                      <Text color="gray"> · you</Text>
                     )}
-                  </span>
+                  </Text>
                   {t.winner_email === e.player_email && (
-                    <span className="win">winner</span>
+                    <Badge
+                      color="orange"
+                      variant="soft"
+                      style={{ marginLeft: "auto" }}
+                    >
+                      winner
+                    </Badge>
                   )}
                 </div>
               ))}
             </div>
           )}
-        </section>
+        </Card>
       </div>
-    </>
+    </div>
   );
 }

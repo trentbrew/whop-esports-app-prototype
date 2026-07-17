@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { createPortal } from "react-dom";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Button,
+  Dialog,
+  Text,
+  TextField,
+} from "@whop/react/components";
 import { enterTournament } from "@/app/actions";
 import { formatCents } from "@/lib/money";
 
@@ -17,11 +22,8 @@ export function EnterButton({
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
-
-  useEffect(() => setMounted(true), []);
 
   function pay() {
     setError(null);
@@ -41,61 +43,60 @@ export function EnterButton({
   }
 
   return (
-    <>
-      <button className="btn btn-gold btn-block" onClick={() => setOpen(true)}>
-        Enter tournament · <span className="amt">{formatCents(feeCents)}</span>
-      </button>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger>
+        <Button size="3" color="blue" variant="solid" style={{ width: "100%" }}>
+          Enter tournament · {formatCents(feeCents)}
+        </Button>
+      </Dialog.Trigger>
+      <Dialog.Content style={{ maxWidth: 420 }}>
+        <Dialog.Title>{name}</Dialog.Title>
+        <Dialog.Description>
+          Tournament entry · {formatCents(feeCents)}
+        </Dialog.Description>
 
-      {open &&
-        mounted &&
-        createPortal(
-          <div
-            className="overlay"
-            onClick={(e) => e.target === e.currentTarget && setOpen(false)}
+        <div className="stack" style={{ marginTop: 16, gap: 12 }}>
+          <label>
+            <Text as="div" size="1" color="gray" style={{ marginBottom: 4 }}>
+              Email
+            </Text>
+            <TextField.Root>
+              <TextField.Input value="nova@circuit.gg" readOnly />
+            </TextField.Root>
+          </label>
+
+          <label>
+            <Text as="div" size="1" color="gray" style={{ marginBottom: 4 }}>
+              Payment method
+            </Text>
+            <TextField.Root>
+              <TextField.Input value="Card · Whop checkout" readOnly />
+            </TextField.Root>
+          </label>
+
+          {error && (
+            <Text size="2" color="red">
+              {error}
+            </Text>
+          )}
+
+          <Button
+            size="3"
+            color="blue"
+            variant="solid"
+            onClick={pay}
+            loading={pending}
+            disabled={pending}
+            style={{ width: "100%" }}
           >
-          <div className="panel modal" role="dialog" aria-modal="true">
-            <div className="modal-head">
-              <div>
-                <h3>{name}</h3>
-                <div className="sub">
-                  Tournament entry · {formatCents(feeCents)}
-                </div>
-              </div>
-              <button className="x" onClick={() => setOpen(false)} aria-label="Close">
-                ×
-              </button>
-            </div>
+            Join · {formatCents(feeCents)}
+          </Button>
 
-            <label className="field">
-              <span>Email</span>
-              <input className="inp" value="nova@circuit.gg" readOnly />
-            </label>
-
-            <label className="field">
-              <span>Payment method</span>
-              <input className="inp" value="Card · Whop checkout" readOnly />
-            </label>
-
-            {error && <p className="err" style={{ marginBottom: 12 }}>{error}</p>}
-
-            <button
-              className="btn btn-gold btn-block"
-              onClick={pay}
-              disabled={pending}
-            >
-              {pending ? "Processing…" : `Join · `}
-              {!pending && <span className="amt">{formatCents(feeCents)}</span>}
-            </button>
-            <p
-              className="muted"
-              style={{ fontSize: 12, textAlign: "center", marginTop: 12 }}
-            >
-              Payments run on Whop — 100+ methods, 195 countries.
-            </p>
-          </div>
-          </div>,
-          document.body,
-        )}
-    </>
+          <Text size="1" color="gray" align="center">
+            Payments run on Whop — 100+ methods, 195 countries.
+          </Text>
+        </div>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }

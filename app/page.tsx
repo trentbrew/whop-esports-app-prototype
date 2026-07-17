@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Badge, Card, Heading, Text } from "@whop/react/components";
 import { listTournaments } from "@/lib/db";
 import { formatShort } from "@/lib/money";
 import { PrizeMeter } from "./components/PrizeMeter";
@@ -17,59 +18,90 @@ export default function Lobby() {
   const tournaments = listTournaments();
 
   return (
-    <>
-      <p className="eyebrow">Open circuit</p>
-      <h1 className="page">Enter the bracket.</h1>
-      <p className="lede">
-        Buy in, fill the purse, and get paid when you win. Every entry stacks
-        the pot; the whole payout runs on Circuit.
-      </p>
+    <div className="stack" style={{ gap: 28 }}>
+      <div>
+        <Text
+          size="1"
+          color="gray"
+          weight="medium"
+          style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}
+        >
+          Open circuit
+        </Text>
+        <Heading as="h1" size="8" style={{ marginTop: 8 }}>
+          Enter the bracket.
+        </Heading>
+        <Text
+          as="p"
+          size="3"
+          color="gray"
+          style={{ maxWidth: "56ch", marginTop: 8 }}
+        >
+          Buy in, fill the purse, and get paid when you win. Every entry stacks
+          the pot; the whole payout runs on Circuit.
+        </Text>
+      </div>
 
       <div className="grid">
         {tournaments.map((t) => (
-          <Link key={t.id} href={`/t/${t.id}`} className="panel tcard">
-            <div className="tcard-head">
-              <div>
-                <span className="game-tag">{t.game}</span>
-                <h3>{t.name}</h3>
-                <div className="host">by {t.host}</div>
+          <Card key={t.id} asChild size="2" variant="surface">
+            <Link href={`/t/${t.id}`} className="tcard">
+              <div className="tcard-head">
+                <div>
+                  <Text
+                    size="1"
+                    color="gray"
+                    weight="medium"
+                    style={{ letterSpacing: "0.08em", textTransform: "uppercase" }}
+                  >
+                    {t.game}
+                  </Text>
+                  <Heading as="h3" size="5" style={{ marginTop: 4 }}>
+                    {t.name}
+                  </Heading>
+                  <Text size="2" color="gray">
+                    by {t.host}
+                  </Text>
+                </div>
+                {t.status === "completed" ? (
+                  <Badge color="orange" variant="soft">
+                    settled
+                  </Badge>
+                ) : t.status === "live" ? (
+                  <Badge color="teal" variant="soft">
+                    live
+                  </Badge>
+                ) : (
+                  <Badge color="orange" variant="surface">
+                    {formatShort(t.entry_fee_cents)}
+                  </Badge>
+                )}
               </div>
-              {t.status === "completed" ? (
-                <span className="pill completed">
-                  <span className="dot" /> settled
-                </span>
-              ) : t.status === "live" ? (
-                <span className="pill open">
-                  <span className="dot" /> live
-                </span>
-              ) : (
-                <span className="fee">{formatShort(t.entry_fee_cents)}</span>
-              )}
-            </div>
 
-            <PrizeMeter
-              poolCents={t.pool_cents}
-              filled={t.filled}
-              capacity={t.capacity}
-            />
+              <PrizeMeter
+                poolCents={t.pool_cents}
+                filled={t.filled}
+                capacity={t.capacity}
+              />
 
-            <div className="between" style={{ marginTop: "auto" }}>
-              <span className="muted" style={{ fontSize: 13 }}>
-                {t.status === "completed"
-                  ? `Won by ${t.winner_email?.split("@")[0]}`
-                  : t.status === "live"
-                    ? "Bracket in progress"
-                    : dateFmt.format(new Date(t.starts_at))}
-              </span>
-              {t.status === "open" && (
-                <span className="pill open">
-                  <span className="dot" /> open
-                </span>
-              )}
-            </div>
-          </Link>
+              <div className="between" style={{ marginTop: "auto" }}>
+                <Text size="2" color="gray">
+                  {t.status === "completed"
+                    ? `Won by ${t.winner_email?.split("@")[0]}`
+                    : t.status === "live"
+                      ? "Bracket in progress"
+                      : dateFmt.format(new Date(t.starts_at))}
+                </Text>
+                {t.status === "open" && (
+                  <Badge color="teal" variant="soft">
+                    open
+                  </Badge>
+                )}
+              </div>
+            </Link>
+          </Card>
         ))}
       </div>
-    </>
+    </div>
   );
 }
